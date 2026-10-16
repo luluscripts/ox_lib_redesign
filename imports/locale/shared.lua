@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@type { [string]: string }
 local dict = {}
@@ -59,7 +52,6 @@ end
 
 local table = lib.table
 
----Loads the ox_lib locale module. Prefer using fxmanifest instead (see [docs](https://coxdocs.dev/ox_lib#usage)).
 ---@param key? string
 function lib.locale(key)
     local lang = key or lib.getLocaleKey()
@@ -87,7 +79,6 @@ function lib.locale(key)
     end
 end
 
----Gets a locale string from another resource and adds it to the dict.
 ---@param resource string
 ---@param key string
 ---@return string?
@@ -108,7 +99,6 @@ function lib.getLocale(resource, key)
     return locale
 end
 
----Backing function for lib.getLocale.
 ---@param key string
 ---@return string?
 exports('getLocale', function(key)

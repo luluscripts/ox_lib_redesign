@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@class OxCommandParams
 ---@field name string
@@ -82,7 +75,6 @@ end
 ---@param cb fun(source: number, args: table, raw: string)
 ---@param ... any
 function lib.addCommand(commandName, properties, cb, ...)
-    -- Try to handle backwards-compatibility with the old addCommand syntax (prior to v3.0)
     local restricted, params
 
     if properties then

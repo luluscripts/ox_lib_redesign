@@ -257,13 +257,12 @@ CreateThread(function()
                 if isAttached then
                     DrawText3Ds(offsetCoords.x, offsetCoords.y, offsetCoords.z, Lang:t('general.stop_pushing_stretcher_button'))
                     if IsControlJustPressed(0, 51) then detachStretcher() isAttached = false sleep = 100 end
-                elseif obj == stretcherObject then -- Only the creator can push and see push prompt
+                elseif obj == stretcherObject then
                     DrawText3Ds(offsetCoords.x, offsetCoords.y, offsetCoords.z, Lang:t('general.push_stretcher_button'))
                     if IsControlJustPressed(0, 51) then attachToStretcher() isAttached = true sleep = 100
                     elseif IsControlJustPressed(0, 74) then FreezeEntityPosition(obj, true) sleep = 100 end
                 end
                 
-                -- Lay prompt is visible to everyone
                 if not isLayingOnBed and not isAttached then
                     DrawText3Ds(offsetCoords.x, offsetCoords.y, offsetCoords.z + 0.2, "[G] - Sedyeye Yatır/Yat")
                     if IsControlJustPressed(0, 47) or IsDisabledControlJustPressed(0, 47) then LayOnStretcher() sleep = 100 end
@@ -271,7 +270,7 @@ CreateThread(function()
             elseif distance <= 2.0 then
                 sleep = 0
                 if not isLayingOnBed then
-                    if obj == stretcherObject then -- Only show push position to creator
+                    if obj == stretcherObject then
                         DrawText3Ds(offsetCoords.x, offsetCoords.y, offsetCoords.z, Lang:t('general.push_position_drawtext'))
                     end
                 end

@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 if cache.game == 'redm' then return end
 
@@ -96,7 +89,6 @@ if cache.game == 'redm' then return end
 ---@field driftTyres? boolean
 
 ---@deprecated
----Not recommended. Entity owners can change rapidly and sporadically.
 RegisterNetEvent('ox_lib:setVehicleProperties', function(netid, data)
     local timeout = 100
     while not NetworkDoesEntityExistWithNetworkId(netid) and timeout > 0 do
@@ -124,8 +116,6 @@ AddStateBagChangeHandler('ox_lib:setVehicleProperties', '', function(bagName, _,
     lib.setVehicleProperties(entity, value)
     Wait(200)
 
-    -- this delay and second-setting of vehicle properties hopefully counters the
-    -- weird sync/ownership/shitfuckery when setting props on server-side vehicles
     if NetworkGetEntityOwner(entity) == cache.playerId then
         lib.setVehicleProperties(entity, value)
         Entity(entity).state:set('ox_lib:setVehicleProperties', nil, true)
@@ -284,11 +274,6 @@ function lib.getVehicleProperties(vehicle)
             tyres = damage.tyres,
             bulletProofTyres = GetVehicleTyresCanBurst(vehicle),
             driftTyres = gameBuild >= 2372 and GetDriftTyresEnabled(vehicle),
-            -- no setters?
-            -- leftHeadlight = GetIsLeftVehicleHeadlightDamaged(vehicle),
-            -- rightHeadlight = GetIsRightVehicleHeadlightDamaged(vehicle),
-            -- frontBumper = IsVehicleBumperBrokenOff(vehicle, true),
-            -- rearBumper = IsVehicleBumperBrokenOff(vehicle, false),
         }
     end
 end
@@ -306,7 +291,6 @@ function lib.setVehicleProperties(vehicle, props, fixVehicle)
     local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
 
     SetVehicleModKit(vehicle, 0)
-    -- SetVehicleAutoRepairDisabled(vehicle, true)
 
     if props.extras then
         for id, disable in pairs(props.extras) do

@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 lib.cron = {}
 
@@ -75,7 +68,6 @@ local monthMap = {
     sep = 9, oct = 10, nov = 11, dec = 12
 }
 
----Returns the last day of the specified month
 ---@param month number
 ---@param year? number
 ---@return number
@@ -431,9 +423,6 @@ end
 ---@param expression string A cron expression such as `* * * * *` representing minute, hour, day, month, and day of the week.
 ---@param job fun(task: OxTask, date: osdate)
 ---@param options? { debug?: boolean }
----Creates a new [cronjob](https://en.wikipedia.org/wiki/Cron), scheduling a task to run at fixed times or intervals.
----Supports numbers, any value `*`, lists `1,2,3`, ranges `1-3`, and steps `*/4`.
----Day of the week is a range of `1-7` starting from Sunday and allows short-names (i.e. sun, mon, tue).
 ---@note maxDelay: Maximum allowed delay in seconds before skipping (0 to disable)
 function lib.cron.new(expression, job, options)
     if not job or type(job) ~= 'function' then
@@ -460,7 +449,6 @@ function lib.cron.new(expression, job, options)
     return task
 end
 
--- reschedule any dead tasks on a new day
 lib.cron.new('0 0 * * *', function()
     for i = 1, #tasks do
         local task = tasks[i]

@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 local loaded = {}
 local _require = require
@@ -29,7 +22,7 @@ local function getModuleInfo(modName)
         return resource, modName:sub(#resource + 3)
     end
 
-    local idx = 4 -- call stack depth (kept slightly lower than expected depth "just in case")
+    local idx = 4
 
     while true do
         local src = debug.getinfo(idx, 'S')?.source
@@ -75,8 +68,6 @@ function package.searchpath(name, path)
     return nil, table.concat(tried, "\n\t")
 end
 
----Attempts to load a module at the given path relative to the resource root directory.\
----Returns a function to load the module chunk, or a string containing all tested paths.
 ---@param modName string
 ---@param env? table
 local function loadModule(modName, env)
@@ -94,8 +85,6 @@ local function loadModule(modName, env)
 end
 
 ---@alias PackageSearcher
----| fun(modName: string): function loader
----| fun(modName: string): nil, string errmsg
 
 ---@type PackageSearcher[]
 package.searchers = {
@@ -119,7 +108,6 @@ package.searchers = {
 ---@param filePath string
 ---@param env? table
 ---@return unknown
----Loads and runs a Lua file at the given path. Unlike require, the chunk is not cached for future use.
 function lib.load(filePath, env)
     if type(filePath) ~= 'string' then
         error(("file path must be a string (received '%s')"):format(filePath), 2)
@@ -134,7 +122,6 @@ end
 
 ---@param filePath string
 ---@return table
----Loads and decodes a json file at the given path.
 function lib.loadJson(filePath)
     if type(filePath) ~= 'string' then
         error(("file path must be a string (received '%s')"):format(filePath), 2)
@@ -150,8 +137,6 @@ function lib.loadJson(filePath)
     error(("json file '%s' not found\n\tno file '@%s/%s.json'"):format(filePath, resourceSrc, modPath))
 end
 
----Loads the given module, returns any value returned by the seacher (`true` when `nil`).\
----Passing `@resourceName.modName` loads a module from a remote resource.
 ---@param modName string
 ---@return unknown
 function lib.require(modName)

@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@class PointProperties
 ---@field coords vector3
@@ -151,13 +144,11 @@ function lib.points.new(...)
     local id = #points + 1
     local self
 
-    -- Support sending a single argument containing point data
     if type(args[1]) == 'table' then
         self = args[1]
         self.id = id
         self.remove = removePoint
     else
-        -- Backwards compatibility for original implementation (args: coords, distance, data)
         self = {
             id = id,
             coords = args[1],

@@ -1,12 +1,4 @@
---[[
-    https://github.com/overextended/ox_lib
 
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
-
----Yields the current thread until a non-nil value is returned by the function.
 ---@generic T
 ---@param cb fun(): T?
 ---@param errMessage string?

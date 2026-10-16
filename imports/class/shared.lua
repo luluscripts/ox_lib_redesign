@@ -1,15 +1,7 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@diagnostic disable: invisible
 local getinfo = debug.getinfo
 
----Ensure the given argument or property has a valid type, otherwise throwing an error.
 ---@param id number | string
 ---@param var any
 ---@param expected type
@@ -40,8 +32,6 @@ end
 local mixins = {}
 local constructors = {}
 
----Somewhat hacky way to remove the constructor from the class.__index.
----Maybe add static fields in the future?
 ---@param class OxClass
 local function getConstructor(class)
     local constructor = constructors[class] or class.constructor
@@ -56,7 +46,6 @@ end
 
 local function void() return '' end
 
----Creates a new instance of the given class.
 ---@protected
 ---@generic T
 ---@param class T | OxClass
@@ -112,13 +101,11 @@ function mixins.new(class, ...)
     return obj
 end
 
----Checks if an object is an instance of the given class.
 ---@param class OxClass
 function mixins:isClass(class)
     return getmetatable(self) == class
 end
 
----Checks if an object is an instance or derivative of the given class.
 ---@param class OxClass
 function mixins:instanceOf(class)
     local mt = getmetatable(self)
@@ -132,7 +119,6 @@ function mixins:instanceOf(class)
     return false
 end
 
----Creates a new class.
 ---@generic S : OxClass
 ---@generic T : string
 ---@param name `T`

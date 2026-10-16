@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@class oxmath : mathlib
 lib.math = math
@@ -29,7 +22,6 @@ local function parseNumber(input, min, max, round)
     return n
 end
 
----Takes a string and returns a set of scalar values.
 ---@param input string
 ---@param min? number
 ---@param max? number
@@ -49,7 +41,6 @@ function math.toscalars(input, min, max, round)
     return table.unpack(arr)
 end
 
----Tries to convert its argument to a vector.
 ---@param input string | table
 ---@param min? number
 ---@param max? number
@@ -72,7 +63,6 @@ function math.tovector(input, min, max, round)
             return vector(table.unpack(input))
         end
 
-        -- vector doesn't accept literal nils
         return input.w and vector4(input.x, input.y, input.z, input.w)
             or input.z and vector3(input.x, input.y, input.z)
             or input.y and vector2(input.x, input.y)
@@ -82,7 +72,6 @@ function math.tovector(input, min, max, round)
     error(('cannot convert %s to a vector value'):format(inputType), 2)
 end
 
----Tries to convert a surface Normal to a Rotation.
 ---@param input vector3
 ---@return vector3
 function math.normaltorotation(input)
@@ -97,7 +86,6 @@ function math.normaltorotation(input)
     error(('cannot convert type %s to a rotation vector'):format(inputType), 2)
 end
 
----Tries to convert its argument to a vector4.
 ---@param input string | table
 ---@return vector4
 function math.torgba(input)
@@ -107,7 +95,6 @@ function math.torgba(input)
     return res
 end
 
----Takes a hexidecimal string and returns three integers.
 ---@param input string
 ---@return integer
 ---@return integer
@@ -117,7 +104,6 @@ function math.hextorgb(input)
     return tonumber(r, 16), tonumber(g, 16), tonumber(b, 16)
 end
 
----Formats a number as a hexadecimal string.
 ---@param n number | string
 ---@param upper? boolean
 ---@return string
@@ -126,26 +112,23 @@ function math.tohex(n, upper)
     return formatString:format(n)
 end
 
----Converts input number into grouped digits
 ---@param number number
 ---@param seperator? string
 ---@return string
-function math.groupdigits(number, seperator) -- credit http://richard.warburton.it
+function math.groupdigits(number, seperator)
     local left, num, right = string.match(number, '^([^%d]*%d)(%d*)(.-)$')
     return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. (seperator or ',')):reverse()) .. right
 end
 
----Clamp a number between 2 other numbers
 ---@param val number
 ---@param lower number
 ---@param upper number
 ---@return number
-function math.clamp(val, lower, upper)                    -- credit https://love2d.org/forums/viewtopic.php?t=1856
-    if lower > upper then lower, upper = upper, lower end -- swap if boundaries supplied the wrong way
+function math.clamp(val, lower, upper)
+    if lower > upper then lower, upper = upper, lower end
     return math.max(lower, math.min(upper, val))
 end
 
----Calculates an intermediate value between `start` and `finish` based on the interpolation `factor`.
 ---@generic T : number | vector2 | vector3 | vector4
 ---@param start T
 ---@param finish T
@@ -166,7 +149,6 @@ local function interpolateTable(start, finish, factor)
     return result
 end
 
----Linearly interpolates between two values over a specified duration, returning an iterator function that will run once per game-frame.
 ---@generic T : number | table | vector2 | vector3 | vector4
 ---@param start T -- The starting value of the interpolation.
 ---@param finish T -- The ending value of the interpolation.
@@ -205,7 +187,6 @@ function math.lerp(start, finish, duration)
     end
 end
 
----Rounds a number to a whole number or to the specified number of decimal places.
 ---@param value number | string
 ---@param places? number | string
 ---@return number

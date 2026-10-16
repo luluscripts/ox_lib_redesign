@@ -36,7 +36,6 @@ shared_script 'resource/init.lua'
 
 shared_scripts {
     'resource/**/shared.lua',
-    -- 'resource/**/shared/*.lua'
 }
 
 client_scripts {

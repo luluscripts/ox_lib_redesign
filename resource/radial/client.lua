@@ -1,10 +1,5 @@
 local jobRadialId = nil
 
--- Server runs qb-core, not qbx_core — `exports.qbx_core.GetPlayerData` threw
--- "No such export" on every access (the error happens while indexing the
--- exports proxy, before pcall's protected call even starts, so pcall here
--- never actually caught it). Mirrors lulu_chat/bridge/qb.lua's own
--- GetResourceState-polling pattern for grabbing the core object safely.
 local QBCore = nil
 CreateThread(function()
     local state = GetResourceState('qb-core')

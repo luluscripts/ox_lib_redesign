@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@type { [string]: MenuProps }
 local registeredMenus = {}
@@ -70,7 +63,7 @@ function lib.showMenu(id, startIndex)
                 if openMenu.disableInput == nil or openMenu.disableInput then
                     DisablePlayerFiring(cache.playerId, true)
                     if cache.game == 'fivem' then
-                        HudWeaponWheelIgnoreSelection()  -- Not a REDM native
+                        HudWeaponWheelIgnoreSelection()
                     end
                     DisableControlAction(0, control, true)
                 end
@@ -128,10 +121,10 @@ function lib.getOpenMenu() return openMenu and openMenu.id end
 
 RegisterNUICallback('confirmSelected', function(data, cb)
     cb(1)
-    data[1] += 1 -- selected
+    data[1] += 1
 
     if data[2] then
-        data[2] += 1 -- scrollIndex
+        data[2] += 1
     end
 
     local menu = openMenu
@@ -152,10 +145,10 @@ RegisterNUICallback('changeIndex', function(data, cb)
     cb(1)
     if not openMenu or not openMenu.onSideScroll then return end
 
-    data[1] += 1 -- selected
+    data[1] += 1
 
     if data[2] then
-        data[2] += 1 -- scrollIndex
+        data[2] += 1
     end
 
     openMenu.onSideScroll(data[1], data[2], openMenu.options[data[1]].args)
@@ -165,7 +158,7 @@ RegisterNUICallback('changeSelected', function(data, cb)
     cb(1)
     if not openMenu or not openMenu.onSelected then return end
 
-    data[1] += 1 -- selected
+    data[1] += 1
 
 
     local args = openMenu.options[data[1]].args
@@ -178,7 +171,7 @@ RegisterNUICallback('changeSelected', function(data, cb)
     if data[2] then args[data[3]] = true end
 
     if data[2] and not args.isCheck then
-        data[2] += 1 -- scrollIndex
+        data[2] += 1
     end
 
     openMenu.onSelected(data[1], data[2], args)
@@ -188,7 +181,7 @@ RegisterNUICallback('changeChecked', function(data, cb)
     cb(1)
     if not openMenu or not openMenu.onCheck then return end
 
-    data[1] += 1 -- selected
+    data[1] += 1
 
     openMenu.onCheck(data[1], data[2], openMenu.options[data[1]].args)
 end)

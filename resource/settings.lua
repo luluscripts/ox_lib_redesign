@@ -1,4 +1,3 @@
--- Some users have locale set from ox_lib v2
 if GetResourceKvpInt('reset_locale') ~= 1 then
     DeleteResourceKvp('locale')
     SetResourceKvpInt('reset_locale', 1)
@@ -19,7 +18,6 @@ local function safeGetKvp(fn, key, default)
     return result or default
 end
 
--- colors of ox_lib's windows (notifications, menus, dialogs...), picked in the /ox_lib settings dialog
 local defaultTheme = { accent = '#FF6FAE', text = '#F8F6FA', bg = '#17151C', opacity = 100 }
 
 local function isHex(v) return type(v) == 'string' and v:match('^#%x%x%x%x%x%x$') ~= nil end
@@ -77,7 +75,6 @@ RegisterNUICallback('uiReady', function(_, cb)
     cb(settings.ui_theme)
 end)
 
--- translated text with an English fallback for locales that do not have the new keys yet
 local function L(key, fallback)
     local text = locale(key)
     if not text or text == key then return fallback end
@@ -135,7 +132,6 @@ RegisterCommand('ox_lib', function()
         {
             type = 'button',
             label = L('ui.settings.ui_reset', 'Reset colors to default'),
-            -- 0-based indexes of the accent / text / bg colors and the opacity slider above
             resets = {
                 { index = 2, value = defaultTheme.accent },
                 { index = 3, value = defaultTheme.text },
@@ -177,7 +173,6 @@ RegisterCommand('ox_lib', function()
     end
 end)
 
--- escape hatch for when a saved theme makes the dialogs unreadable (e.g. text color == background color)
 RegisterCommand('ox_lib_resetui', function()
     local theme = normalizeTheme(nil)
     set('ui_theme', theme)

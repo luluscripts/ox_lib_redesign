@@ -1,11 +1,4 @@
 ---@meta
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 if not _VERSION:find('5.4') then
     error('Lua 5.4 must be enabled in the resource manifest!', 2)
@@ -14,7 +7,6 @@ end
 local resourceName = GetCurrentResourceName()
 local ox_lib = 'ox_lib'
 
--- Some people have decided to load this file as part of ox_lib's fxmanifest?
 if resourceName == ox_lib then return end
 
 if lib and lib.name == ox_lib then
@@ -27,12 +19,8 @@ if GetResourceState(ox_lib) ~= 'started' then
     error('^1ox_lib must be started before this resource.^0', 0)
 end
 
--- Ignore invalid types during msgpack.pack (e.g. userdata)
 msgpack.setoption('ignore_invalid', true)
 
------------------------------------------------------------------------------------------------
--- Module
------------------------------------------------------------------------------------------------
 
 local LoadResourceFile = LoadResourceFile
 local context = IsDuplicityVersion() and 'server' or 'client'
@@ -69,9 +57,6 @@ local function loadModule(self, module)
     end
 end
 
------------------------------------------------------------------------------------------------
--- API
------------------------------------------------------------------------------------------------
 
 local function call(self, index, ...)
     local module = rawget(self, index)
@@ -105,7 +90,6 @@ local lib = setmetatable({
 })
 
 local intervals = {}
---- Dream of a world where this PR gets accepted.
 ---@param callback function | number
 ---@param interval? number
 ---@param ... any
@@ -158,21 +142,12 @@ function ClearInterval(id)
     intervals[id] = -1
 end
 
---[[
-    lua language server doesn't support generics when using @overload
-    see https://github.com/LuaLS/lua-language-server/issues/723
-    this function stub allows the following to work
-
-    local key = cache('key', function() return 'abc' end) -- fff: 'abc'
-    local game = cache.game -- game: string
-]]
 
 ---@generic T
 ---@param key string
 ---@param func fun(...: any): T
 ---@param timeout? number
 ---@return T
----Caches the result of a function, optionally clearing it after timeout ms.
 function cache(key, func, timeout) end
 
 local cacheEvents = {}
@@ -244,10 +219,6 @@ if context == 'client' then
     cache.playerId = PlayerId()
     cache.serverId = GetPlayerServerId(cache.playerId)
 else
-    ---`server`\
-    ---Trigger a notification on the target playerId from the server.\
-    ---If locales are loaded, the title and description will be formatted automatically.\
-    ---Note: No support for locale placeholders when using this function.
     ---@param playerId number
     ---@param data NotifyProps
     ---@deprecated
@@ -264,14 +235,12 @@ else
 
     ---@param poolName 'CPed' | 'CObject' | 'CVehicle'
     ---@return number[]
-    ---Server-side parity for the `GetGamePool` client native.
     function GetGamePool(poolName)
         local fn = poolNatives[poolName]
         return fn and fn() --[[@as number[] ]]
     end
 
     ---@return number[]
-    ---Server-side parity for the `GetPlayers` client native.
     function GetActivePlayers()
         local playerNum = GetNumPlayerIndices()
         local players = table.create(playerNum, 0)

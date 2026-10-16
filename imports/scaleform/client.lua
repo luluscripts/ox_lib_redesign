@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@class renderTargetTable
 ---@field name string
@@ -29,7 +22,6 @@
 ---@field private private { isDrawing: boolean }
 lib.scaleform = lib.class('Scaleform')
 
---- Converts the arguments into data types usable by scaleform
 ---@param argsTable (number | string | boolean)[]
 local function convertArgs(argsTable)
     for i = 1, #argsTable do

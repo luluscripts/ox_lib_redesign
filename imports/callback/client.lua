@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 local pendingCallbacks = {}
 local timers = {}
@@ -107,7 +100,6 @@ lib.callback = setmetatable({}, {
 
 ---@param event string
 ---@param delay? number | false prevent the event from being called for the given time.
----Sends an event to the server and halts the current thread until a response is returned.
 ---@diagnostic disable-next-line: duplicate-set-field
 function lib.callback.await(event, delay, ...)
     return triggerServerCallback(nil, event, delay, false, ...)
@@ -130,7 +122,6 @@ local pcall = pcall
 
 ---@param name string
 ---@param cb function
----Registers an event handler and callback function to respond to server requests.
 ---@diagnostic disable-next-line: duplicate-set-field
 function lib.callback.register(name, cb)
     event = cbEvent:format(name)

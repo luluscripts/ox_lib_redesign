@@ -1,12 +1,4 @@
---[[
-    https://github.com/overextended/ox_lib
 
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
-
--- Add additional functions to the standard table library
 
 ---@class oxtable : tablelib
 lib.table = table
@@ -15,7 +7,6 @@ local pairs = pairs
 ---@param tbl table
 ---@param value any
 ---@return boolean
----Checks if tbl contains the given values. Only intended for simple values and unnested tables.
 local function contains(tbl, value)
     if type(value) ~= 'table' then
         for _, v in pairs(tbl) do
@@ -45,7 +36,6 @@ end
 ---@param t1 any
 ---@param t2 any
 ---@return boolean
----Compares if two values are equal, iterating over tables and matching both keys and values.
 local function table_matches(t1, t2)
 	local type1, type2 = type(t1), type(t2)
 
@@ -71,7 +61,6 @@ end
 ---@generic T
 ---@param tbl T
 ---@return T
----Recursively clones a table to ensure no table references.
 local function table_deepclone(tbl)
     tbl = table.clone(tbl)
 
@@ -88,7 +77,6 @@ end
 ---@param t2 table
 ---@param addDuplicateNumbers boolean? add duplicate number keys together if true, replace if false. Defaults to true.
 ---@return table
----Merges two tables together. Defaults to adding duplicate keys together if they are numbers, otherwise they are overriden.
 local function table_merge(t1, t2, addDuplicateNumbers)
     addDuplicateNumbers = addDuplicateNumbers == nil or addDuplicateNumbers
     for k, v2 in pairs(t2) do
@@ -110,7 +98,6 @@ end
 
 ---@param tbl table
 ---@return table
----Shuffles the elements of a table randomly using the Fisher-Yates algorithm.
 local function shuffle(tbl)
     local len = #tbl
     for i = len, 2, -1 do
@@ -154,7 +141,6 @@ function rawset(tbl, index, value)
     return _rawset(tbl, index, value)
 end
 
----Makes a table read-only, preventing further modification. Unfrozen tables stored within `tbl` are still mutable.
 ---@generic T : table
 ---@param tbl T
 ---@return T
@@ -175,7 +161,6 @@ function table.freeze(tbl)
     return tbl
 end
 
----Return true if `tbl` is set as read-only.
 ---@param tbl table
 ---@return boolean
 function table.isfrozen(tbl)

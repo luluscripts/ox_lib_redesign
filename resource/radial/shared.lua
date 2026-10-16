@@ -35,7 +35,6 @@ Config.MenuItems = {
             { id = 'toggle-all-blips',      title = 'Tüm Blipler', icon = 'tags',            type = 'client', event = 'lusttbabablips:toggleAll',       shouldClose = true },
             { id = 'toggle-bank-blips',     title = 'Bankalar',    icon = 'dollar-sign',     type = 'client', event = 'lusttbabablips:togglebank',      shouldClose = true },
             { id = 'toggle-gunshop-blips',  title = 'Gunshoplar',  icon = 'gun',             type = 'client', event = 'lusttbabablips:toggleGunShop',   shouldClose = true },
-           -- { id = 'toggle-mek-blips',      title = 'Mekanikler',  icon = 'screwdriver-wrench', type = 'client', event = 'lusttbabablips:toggleisletme', shouldClose = true },
             { id = 'toggle-shop-blips',     title = 'Marketler',   icon = 'cart-shopping',   type = 'client', event = 'lusttbabablips:toggleMarkets',   shouldClose = true },
             { id = 'toggle-clothing-blips', title = 'Kıyafetçi',   icon = 'shirt',           type = 'client', event = 'lusttbabablips:toggleClothes',   shouldClose = true },
             { id = 'toggleTattoo',          title = 'Dövmeci',     icon = 'pen-nib',         type = 'client', event = 'lusttbabablips:toggleTattoo',    shouldClose = true },
@@ -276,14 +275,6 @@ Config.ExtraCommands = {
         Func = function() ToggleClothing("Shirt", true) end,
         Desc = "Tişörtü giy/çıkar",
     },
-    -- ["yenile"] = {
-    --     Func = function()
-    --         if not ResetClothing(true) then
-    --             lib.notify({ description = 'Kıyafetler sıfırlandı', type = 'success' })
-    --         end
-    --     end,
-    --     Desc = "Tüm kıyafetleri sıfırla",
-    -- },
     ["bagoff"] = {
         Func = function() ToggleClothing("Bagoff", true) end,
         Desc = "Çantayı tak/çıkar",

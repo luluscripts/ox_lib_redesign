@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@class oxstring : stringlib
 lib.string = string
@@ -24,13 +17,6 @@ local formatChar = {
     ['.'] = getAlphanumeric,
 }
 
----Creates a random string based on a given pattern.
----`1` will output a random number from 0-9.
----`A` will output a random letter from A-Z.
----`a` will output a random letter from a-z.
----`.` will output a random letter or number.
----`^` will output the following character literally.
----Any other character will output said character.
 ---@param pattern string
 ---@param length? integer Sets the length of the returned string, either padding it or omitting characters.
 ---@return string

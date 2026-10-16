@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 local input
 
@@ -45,7 +38,6 @@ function lib.inputDialog(heading, rows, options)
     if input then return end
     input = promise.new()
 
-    -- Backwards compat with string tables
     for i = 1, #rows do
         if type(rows[i]) == 'string' then
             rows[i] = { type = 'input', label = rows[i] --[[@as string]] }

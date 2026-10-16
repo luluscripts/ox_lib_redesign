@@ -1,10 +1,3 @@
---[[
-    https://github.com/overextended/ox_lib
-
-    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
-
-    Copyright © 2025 Linden <https://github.com/thelindat>
-]]
 
 ---@class RadialItem
 ---@field icon string | {[1]: IconProp, [2]: string};
@@ -54,7 +47,6 @@ local menuHistory = {}
 ---@type RadialMenuProps?
 local currentRadial = nil
 
----Open a the global radial menu or a registered radial submenu with the given id.
 ---@param id string?
 ---@param option number?
 local function showRadial(id, option)
@@ -69,7 +61,6 @@ local function showRadial(id, option)
     TriggerEvent('lustt-radial:open', nuiItems(radial and radial.items or menuItems), radial and true or nil, option)
 end
 
----Refresh the current menu items or return from a submenu to its parent.
 local function refreshRadial(menuId)
     if not isOpen then return end
 
@@ -84,9 +75,8 @@ local function refreshRadial(menuId)
                     local parent = menus[subMenu.id]
 
                     for j = 1, #parent.items do
-                        -- If we still have a path to the current submenu, refresh instead of returning
                         if parent.items[j].menu == currentRadial.id then
-                            return -- showRadial(currentRadial.id)
+                            return
                         end
                     end
 
@@ -108,7 +98,6 @@ local function refreshRadial(menuId)
     showRadial()
 end
 
----Registers a radial sub menu with predefined options.
 ---@param radial RadialMenuProps
 function lib.registerRadial(radial)
     menus[radial.id] = radial
@@ -133,7 +122,6 @@ function lib.hideRadial()
     currentRadial = nil
 end
 
----Registers an item or array of items in the global radial menu.
 ---@param items RadialMenuItem | RadialMenuItem[]
 function lib.addRadialItem(items)
     local menuSize = #menuItems
@@ -168,7 +156,6 @@ function lib.addRadialItem(items)
     end
 end
 
----Removes an item from the global radial menu with the given id.
 ---@param id string
 function lib.removeRadialItem(id)
     local menuItem
@@ -187,13 +174,11 @@ function lib.removeRadialItem(id)
     refreshRadial(id)
 end
 
----Check if the radial menu is currently open.
 ---@return boolean
 function lib.isRadialOpen()
     return isOpen
 end
 
----Removes all items from the global radial menu.
 function lib.clearRadialItems()
     table.wipe(menuItems)
 
@@ -268,7 +253,6 @@ end)
 RegisterNUICallback('radialTransition', function(_, cb)
     Wait(100)
 
-    -- If menu was closed during transition, don't open the submenu
     if not isOpen then return cb(false) end
 
     cb(true)
@@ -276,7 +260,6 @@ end)
 
 local isDisabled = false
 
----Disallow players from opening the radial menu.
 ---@param state boolean
 function lib.disableRadial(state)
     isDisabled = state
