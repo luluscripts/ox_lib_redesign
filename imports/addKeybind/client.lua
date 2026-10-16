@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 if cache.game == 'redm' then return end
 
@@ -46,6 +53,7 @@ end
 
 function keybind_mt:disable(toggle)
     self.disabled = toggle
+    self.isPressed = false
 end
 
 ---@param data KeybindProps
@@ -56,13 +64,13 @@ function lib.addKeybind(data)
     keybinds[data.name] = setmetatable(data, keybind_mt)
 
     RegisterCommand('+' .. data.name, function()
-        if data.disabled or IsPauseMenuActive() then return end
+        if data.disabled or (IsPauseMenuActive() and not data.allowInPauseMenu) then return end
         data.isPressed = true
         if data.onPressed then data:onPressed() end
     end)
 
     RegisterCommand('-' .. data.name, function()
-        if data.disabled or IsPauseMenuActive() then return end
+        if data.disabled or (IsPauseMenuActive() and not data.allowInPauseMenu) then return end
         data.isPressed = false
         if data.onReleased then data:onReleased() end
     end)

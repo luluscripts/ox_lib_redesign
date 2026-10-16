@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 ---@enum PrintLevel
 local printLevel = {
@@ -28,6 +35,8 @@ local function handleException(reason, value)
 end
 local jsonOptions = { sort_keys = true, indent = true, exception = handleException }
 
+---Prints to console conditionally based on what ox:printlevel is.
+---Any print with a level more severe will also print. If ox:printlevel is info, then warn and error prints will appear as well, but debug prints will not.
 ---@param level PrintLevel
 ---@param ... any
 local function libPrint(level, ...)
@@ -51,6 +60,7 @@ lib.print = {
     debug = function(...) libPrint(printLevel.debug, ...) end,
 }
 
+-- Update the print level when the convar changes
 if (AddConvarChangeListener) then
     AddConvarChangeListener('ox:printlevel*', function(convarName, reserved)
         if (convarName ~= convarResource and convarName ~= convarGlobal) then return end

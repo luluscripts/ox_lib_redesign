@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 local registeredCallbacks = {}
 
@@ -11,6 +18,9 @@ AddEventHandler('onResourceStop', function(resourceName)
     end
 end)
 
+---For internal use only.
+---Sets a callback event as registered to a specific resource, preventing it from
+---being overwritten. Any unknown callbacks will return an error to the caller.
 ---@param callbackName string
 ---@param isValid boolean
 function lib.setValidCallback(callbackName, isValid)
@@ -37,7 +47,7 @@ function lib.setValidCallback(callbackName, isValid)
 end
 
 function lib.isCallbackValid(callbackName)
-    return registeredCallbacks[callbackName] == GetInvokingResource() or cache.resource
+    return registeredCallbacks[callbackName] == (GetInvokingResource() or cache.resource)
 end
 
 local cbEvent = '__ox_cb_%s'

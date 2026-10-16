@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 ---@class DuiProperties
 ---@field url string
@@ -14,13 +21,17 @@
 ---@field txdObject number
 ---@field dictName string
 ---@field txtName string
-lib.dui = lib.class('Dui')
+---@field private new DuiConstructor
+lib.dui = Class('Dui')
 
 ---@type table<string, Dui>
 local duis = {}
 
 local currentId = 0
 
+---@class DuiConstructor
+---@overload fun(self: Dui, data: DuiProperties): Dui
+---@private
 ---@param data DuiProperties
 function lib.dui:constructor(data)
 	local time = GetGameTimer()

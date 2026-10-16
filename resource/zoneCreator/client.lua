@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 local creatorActive = false
 local controlsActive = false
@@ -195,7 +202,7 @@ local function startCreator(arg, useLast)
     while creatorActive do
         Wait(0)
 
-        if IsDisabledControlJustReleased(0, 73) then
+        if IsDisabledControlJustReleased(0, 73) then -- x
             controlsActive = not controlsActive
         end
 
@@ -244,22 +251,22 @@ local function startCreator(arg, useLast)
             local lStep = steps[1][step]
             local rStep = steps[2][step]
 
-            if IsDisabledControlJustReleased(0, 17) then
-                if IsDisabledControlPressed(0, 21) then
+            if IsDisabledControlJustReleased(0, 17) then -- scroll up
+                if IsDisabledControlPressed(0, 21) then -- shift held down
                     change = true
                     height += lStep
-                elseif IsDisabledControlPressed(0, 36) then
+                elseif IsDisabledControlPressed(0, 36) then -- ctrl held down
                     change = true
                     width += lStep
-                elseif IsDisabledControlPressed(0, 19) then
+                elseif IsDisabledControlPressed(0, 19) then -- alt held down
                     change = true
                     length += lStep
                 elseif step < 11 then
                     change = true
                     step += 1
                 end
-            elseif IsDisabledControlJustReleased(0, 16) then
-                if IsDisabledControlPressed(0, 21) then
+            elseif IsDisabledControlJustReleased(0, 16) then -- scroll down
+                if IsDisabledControlPressed(0, 21) then -- shift held down
                     change = true
 
                     if height - lStep > lStep then
@@ -267,7 +274,7 @@ local function startCreator(arg, useLast)
                     elseif height - lStep > 0 then
                         height = lStep
                     end
-                elseif IsDisabledControlPressed(0, 36) then
+                elseif IsDisabledControlPressed(0, 36) then -- ctrl held down
                     change = true
 
                     if width - lStep > lStep then
@@ -275,7 +282,7 @@ local function startCreator(arg, useLast)
                     elseif width - lStep > 0 then
                         width = lStep
                     end
-                elseif IsDisabledControlPressed(0, 19) then
+                elseif IsDisabledControlPressed(0, 19) then -- alt held down
                     change = true
 
                     if length - lStep > lStep then
@@ -287,7 +294,7 @@ local function startCreator(arg, useLast)
                     change = true
                     step -= 1
                 end
-            elseif IsDisabledControlJustReleased(0, 32) then
+            elseif IsDisabledControlJustReleased(0, 32) then -- w
                 change = true
 
                 if alignMovementWithCamera then
@@ -312,7 +319,7 @@ local function startCreator(arg, useLast)
 
                     yCoord = newValue
                 end
-            elseif IsDisabledControlJustReleased(0, 33) then
+            elseif IsDisabledControlJustReleased(0, 33) then -- s
                 change = true
 
                 if alignMovementWithCamera then
@@ -337,7 +344,7 @@ local function startCreator(arg, useLast)
 
                     yCoord = newValue
                 end
-            elseif IsDisabledControlJustReleased(0, 35) then
+            elseif IsDisabledControlJustReleased(0, 35) then -- d
                 change = true
 
                 if alignMovementWithCamera then
@@ -362,7 +369,7 @@ local function startCreator(arg, useLast)
 
                     xCoord = newValue
                 end
-            elseif IsDisabledControlJustReleased(0, 34) then
+            elseif IsDisabledControlJustReleased(0, 34) then -- a
                 change = true
 
                 if alignMovementWithCamera then
@@ -387,7 +394,7 @@ local function startCreator(arg, useLast)
 
                     xCoord = newValue
                 end
-            elseif IsDisabledControlJustReleased(0, 45) then
+            elseif IsDisabledControlJustReleased(0, 45) then -- r
                 change = true
                 local newValue = zCoord + lStep
 
@@ -396,7 +403,7 @@ local function startCreator(arg, useLast)
                 end
 
                 zCoord = newValue
-            elseif IsDisabledControlJustReleased(0, 23) then
+            elseif IsDisabledControlJustReleased(0, 23) then -- f
                 change = true
                 local newValue = zCoord - lStep
 
@@ -405,21 +412,21 @@ local function startCreator(arg, useLast)
                 end
 
                 zCoord = newValue
-            elseif IsDisabledControlJustReleased(0, 38) then
+            elseif IsDisabledControlJustReleased(0, 38) then -- e
                 change = true
                 heading -= rStep
 
                 if heading < 0 then
                     heading += 360
                 end
-            elseif IsDisabledControlJustReleased(0, 44) then
+            elseif IsDisabledControlJustReleased(0, 44) then -- q
                 change = true
                 heading += rStep
 
                 if heading >= 360 then
                     heading -= 360
                 end
-            elseif IsDisabledControlJustReleased(0, 47) then
+            elseif IsDisabledControlJustReleased(0, 47) then -- g
                 change = true
 
                 if displayMode == #displayModes then
@@ -427,10 +434,10 @@ local function startCreator(arg, useLast)
                 else
                     displayMode += 1
                 end
-            elseif IsDisabledControlJustReleased(0, 26) then
+            elseif IsDisabledControlJustReleased(0, 26) then -- c
                 change = true
                 alignMovementWithCamera = not alignMovementWithCamera
-            elseif IsDisabledControlJustReleased(0, 22) then
+            elseif IsDisabledControlJustReleased(0, 22) then -- space
                 change = true
 
                 if zoneType == 'poly' then
@@ -440,9 +447,9 @@ local function startCreator(arg, useLast)
                 coords = GetEntityCoords(cache.ped)
                 xCoord = round(coords.x)
                 yCoord = round(coords.y)
-            elseif IsDisabledControlJustReleased(0, 201) then
+            elseif IsDisabledControlJustReleased(0, 201) then -- enter
                 closeCreator()
-            elseif IsDisabledControlJustReleased(0, 194) then
+            elseif IsDisabledControlJustReleased(0, 194) then -- backspace
                 change = true
 
                 if zoneType == 'poly' and #points > 0 then
@@ -451,7 +458,7 @@ local function startCreator(arg, useLast)
 
                     points[#points] = nil
                 end
-            elseif IsDisabledControlJustReleased(0, 200) then
+            elseif IsDisabledControlJustReleased(0, 200) then -- esc
                 SetPauseMenuActive(false)
                 closeCreator(true)
             end

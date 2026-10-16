@@ -1,43 +1,52 @@
----@meta
+--[[
+    https://github.com/overextended/ox_lib
 
-if not _VERSION:find('5.4') then
-    error('Lua 5.4 must be enabled in the resource manifest!', 2)
-end
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 local resourceName = GetCurrentResourceName()
-local ox_lib = 'ox_lib'
+local lib = {
+    name = debug.getinfo(1, 'S').source:match('^@@([^/]+)/.+'),
+    context = IsDuplicityVersion() and 'server' or 'client',
+}
 
-if resourceName == ox_lib then return end
+if resourceName == lib.name then return end
 
-if lib and lib.name == ox_lib then
-    error(("Cannot load ox_lib more than once.\n\tRemove any duplicate entries from '@%s/fxmanifest.lua'"):format(resourceName))
+if _ENV.lib?.name then
+    if _ENV.lib.name == lib.name then return end
 end
 
-local export = exports[ox_lib]
-
-if GetResourceState(ox_lib) ~= 'started' then
+if GetResourceState(lib.name) ~= 'started' then
     error('^1ox_lib must be started before this resource.^0', 0)
 end
 
+local export = exports[lib.name]
+local status = export.hasLoaded()
+
+if status ~= true then error(status, 2) end
+
+-- Prevent errors when encoding unknown data types (such as userdata, glm_polygon, etc.)
 msgpack.setoption('ignore_invalid', true)
-
-
-local LoadResourceFile = LoadResourceFile
-local context = IsDuplicityVersion() and 'server' or 'client'
 
 function noop() end
 
+load(LoadResourceFile(lib.name, 'require.lua'), 'require')(lib)
+
+local LoadResourceFile = LoadResourceFile
+
 local function loadModule(self, module)
     local dir = ('imports/%s'):format(module)
-    local chunk = LoadResourceFile(ox_lib, ('%s/%s.lua'):format(dir, context))
-    local shared = LoadResourceFile(ox_lib, ('%s/shared.lua'):format(dir))
+    local chunk = LoadResourceFile(lib.name, ('%s/%s.lua'):format(dir, lib.context))
+    local shared = LoadResourceFile(lib.name, ('%s/shared.lua'):format(dir))
 
     if shared then
         chunk = (chunk and ('%s\n%s'):format(shared, chunk)) or shared
     end
 
     if chunk then
-        local fn, err = load(chunk, ('@@ox_lib/imports/%s/%s.lua'):format(module, context))
+        local fn, err = load(chunk, ('@@ox_lib/imports/%s/%s.lua'):format(module, lib.context))
 
         if not fn or err then
             if shared then
@@ -56,7 +65,6 @@ local function loadModule(self, module)
         return self[module]
     end
 end
-
 
 local function call(self, index, ...)
     local module = rawget(self, index)
@@ -81,13 +89,7 @@ local function call(self, index, ...)
     return module
 end
 
-local lib = setmetatable({
-    name = ox_lib,
-    context = context,
-}, {
-    __index = call,
-    __call = call,
-})
+setmetatable(lib, { __index = call, __call = call })
 
 local intervals = {}
 ---@param callback function | number
@@ -142,17 +144,12 @@ function ClearInterval(id)
     intervals[id] = -1
 end
 
-
----@generic T
----@param key string
----@param func fun(...: any): T
----@param timeout? number
----@return T
-function cache(key, func, timeout) end
-
 local cacheEvents = {}
 
-local cache = setmetatable({ game = GetGameName(), resource = resourceName }, {
+---@generic T
+---@overload fun(key: string, fn: fun(...: any): T, timeout: number?): T
+---Caches the result of a function, optionally clearing it after timeout ms.
+local cache = setmetatable({ game = GetGameName() --[[@as 'fxserver' | 'fivem' | 'redm']], resource = resourceName }, {
     __index = function(self, key)
         cacheEvents[key] = {}
 
@@ -197,11 +194,10 @@ end
 
 _ENV.lib = lib
 _ENV.cache = cache
-_ENV.require = lib.require
 
 local notifyEvent = ('__ox_notify_%s'):format(cache.resource)
 
-if context == 'client' then
+if lib.context == 'client' then
     RegisterNetEvent(notifyEvent, function(data)
         if locale then
             if data.title then
@@ -219,6 +215,10 @@ if context == 'client' then
     cache.playerId = PlayerId()
     cache.serverId = GetPlayerServerId(cache.playerId)
 else
+    ---`server`\
+    ---Trigger a notification on the target playerId from the server.\
+    ---If locales are loaded, the title and description will be formatted automatically.\
+    ---Note: No support for locale placeholders when using this function.
     ---@param playerId number
     ---@param data NotifyProps
     ---@deprecated
@@ -227,20 +227,8 @@ else
         TriggerClientEvent(notifyEvent, playerId, data)
     end
 
-    local poolNatives = {
-        CPed = GetAllPeds,
-        CObject = GetAllObjects,
-        CVehicle = GetAllVehicles,
-    }
-
-    ---@param poolName 'CPed' | 'CObject' | 'CVehicle'
     ---@return number[]
-    function GetGamePool(poolName)
-        local fn = poolNatives[poolName]
-        return fn and fn() --[[@as number[] ]]
-    end
-
-    ---@return number[]
+    ---Server-side parity for the `GetPlayers` client native.
     function GetActivePlayers()
         local playerNum = GetNumPlayerIndices()
         local players = table.create(playerNum, 0)
@@ -253,6 +241,8 @@ else
     end
 end
 
+require 'Ox.Class'
+
 for i = 1, GetNumResourceMetadata(cache.resource, 'ox_lib') do
     local name = GetResourceMetadata(cache.resource, 'ox_lib', i - 1)
 
@@ -262,3 +252,4 @@ for i = 1, GetNumResourceMetadata(cache.resource, 'ox_lib') do
         if type(module) == 'function' then pcall(module) end
     end
 end
+

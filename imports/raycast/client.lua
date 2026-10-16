@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 lib.raycast = {}
 
@@ -10,8 +17,23 @@ local GetFinalRenderedCamCoord = GetFinalRenderedCamCoord
 local GetFinalRenderedCamRot = GetFinalRenderedCamRot
 
 ---@alias ShapetestIgnore
+---| 1 GLASS
+---| 2 SEE_THROUGH
+---| 3 GLASS | SEE_THROUGH
+---| 4 NO_COLLISION
+---| 7 GLASS | SEE_THROUGH | NO_COLLISION
 
 ---@alias ShapetestFlags integer
+---| 1 INCLUDE_MOVER
+---| 2 INCLUDE_VEHICLE
+---| 4 INCLUDE_PED
+---| 8 INCLUDE_RAGDOLL
+---| 16 INCLUDE_OBJECT
+---| 32 INCLUDE_PICKUP
+---| 64 INCLUDE_GLASS
+---| 128 INCLUDE_RIVER
+---| 256 INCLUDE_FOLIAGE
+---| 511 INCLUDE_ALL
 
 ---@param coords vector3
 ---@param destination vector3

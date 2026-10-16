@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 local pendingCallbacks = {}
 local cbEvent = '__ox_cb_%s'
@@ -7,6 +14,12 @@ RegisterNetEvent(cbEvent:format(cache.resource), function(key, ...)
     local cb = pendingCallbacks[key]
 
     if not cb then return end
+
+    local keyPlayerId = key:match(':(%d+)$')
+
+    if not keyPlayerId or tonumber(keyPlayerId) ~= source then
+        return warn(("Player %d triggered callback event with invalid key '%s'."):format(source, key))
+    end
 
     pendingCallbacks[key] = nil
 
@@ -81,6 +94,7 @@ lib.callback = setmetatable({}, {
 
 ---@param event string
 ---@param playerId number
+--- Sends an event to a client and halts the current thread until a response is returned.
 ---@diagnostic disable-next-line: duplicate-set-field
 function lib.callback.await(event, playerId, ...)
     return triggerClientCallback(nil, event, playerId, false, ...)
@@ -103,9 +117,10 @@ local pcall = pcall
 
 ---@param name string
 ---@param cb function
+---Registers an event handler and callback function to respond to client requests.
 ---@diagnostic disable-next-line: duplicate-set-field
 function lib.callback.register(name, cb)
-    event = cbEvent:format(name)
+    local event = cbEvent:format(name)
 
     lib.setValidCallback(name, true)
 

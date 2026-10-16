@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 ---@class renderTargetTable
 ---@field name string
@@ -20,8 +27,10 @@
 ---@field sfHandle? number
 ---@field fullScreen boolean
 ---@field private private { isDrawing: boolean }
-lib.scaleform = lib.class('Scaleform')
+---@field private new ScaleformConstructor
+lib.scaleform = Class('Scaleform')
 
+--- Converts the arguments into data types usable by scaleform
 ---@param argsTable (number | string | boolean)[]
 local function convertArgs(argsTable)
     for i = 1, #argsTable do
@@ -64,8 +73,10 @@ local function retrieveReturnValue(expectedType)
     end
 end
 
+---@class ScaleformConstructor
+---@overload fun(self: Scaleform, details: detailsTable | string): Scaleform
+---@private
 ---@param details detailsTable | string
----@return nil
 function lib.scaleform:constructor(details)
     details = type(details) == 'table' and details or { name = details }
 

@@ -1,7 +1,15 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 local glm_sincos = require 'glm'.sincos --[[@as fun(n: number): number, number]]
 local glm_rad = require 'glm'.rad --[[@as fun(n: number): number]]
 
+---Get the relative coordinates based on heading/rotation and offset
 ---@overload fun(coords: vector3, heading: number, offset: vector3): vector3
 ---@overload fun(coords: vector4, offset: vector3): vector4
 ---@overload fun(coords: vector3, rotation: vector3, offset: vector3): vector3

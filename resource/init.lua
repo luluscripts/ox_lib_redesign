@@ -3,14 +3,13 @@ local debug_getinfo = debug.getinfo
 function noop() end
 
 lib = setmetatable({
-    name = 'ox_lib',
+    name = GetCurrentResourceName(),
     context = IsDuplicityVersion() and 'server' or 'client',
 }, {
     __newindex = function(self, key, fn)
         rawset(self, key, fn)
 
-        local src = debug_getinfo(2, 'S').short_src
-        if src:find('ox_lib') and src:find('resource') then
+        if debug_getinfo(2, 'S').short_src:find('@ox_lib/resource') then
             exports(key, fn)
         end
     end,
@@ -45,12 +44,14 @@ cache = {
 
 if not LoadResourceFile(lib.name, 'web/build/index.html') then
     local err =
-    '^1Unable to load UI. Build ox_lib or download the latest release.\n	^3https://github.com/communityox/ox_lib/releases/latest/download/ox_lib.zip^0'
+    '^1Unable to load UI. Build ox_lib or download the latest release.\n	^3https://github.com/overextended/ox_lib/releases/latest/download/ox_lib.zip^0'
     function lib.hasLoaded() return err end
 
     error(err)
 end
 
-function lib.hasLoaded() return true end
+load(LoadResourceFile(lib.name, 'require.lua'), 'require')(lib)
+require 'Ox.Class'
 
-require = lib.require
+
+function lib.hasLoaded() return true end

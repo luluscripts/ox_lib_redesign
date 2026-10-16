@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 local cache = _ENV.cache
 cache.playerId = PlayerId()
@@ -23,6 +30,7 @@ CreateThread(function()
 	while true do
 		local ped = PlayerPedId()
 
+		-- If the player's ped is changed, the ped value may return 0 during the transition. If the value is 0, skip all checks.
 		if ped ~= 0 then
 			cache:set('ped', ped)
 

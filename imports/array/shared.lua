@@ -1,6 +1,14 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 ---@class Array<T> : OxClass, { [number]: T }
-lib.array = lib.class('Array')
+---@field private new ArrayConstructor
+lib.array = Class('Array')
 
 local table_unpack = table.unpack
 local table_remove = table.remove
@@ -10,6 +18,8 @@ local table_type = table.type
 
 ---@alias ArrayLike<T> Array | { [number]: T }
 
+---@class ArrayConstructor
+---@overload fun(self: Array, ...: unknown): Array
 ---@private
 function lib.array:constructor(...)
     local arr = { ... }
@@ -26,6 +36,7 @@ function lib.array:__newindex(index, value)
     rawset(self, index, value)
 end
 
+---Creates a new array from an iteratable value.
 ---@param iter table | function | string
 ---@return Array
 function lib.array:from(iter)
@@ -54,6 +65,7 @@ function lib.array:from(iter)
     error(('Array.from argument was not a valid iterable value (received %s)'):format(iterType))
 end
 
+---Returns the element at the given index, with negative numbers counting backwards from the end of the array.
 ---@param index number
 ---@return unknown
 function lib.array:at(index)
@@ -64,6 +76,7 @@ function lib.array:at(index)
     return self[index]
 end
 
+---Create a new array containing the elements of two or more arrays.
 ---@param ... ArrayLike
 function lib.array:merge(...)
     local newArr = table_clone(self)
@@ -82,6 +95,7 @@ function lib.array:merge(...)
     return lib.array:new(table_unpack(newArr))
 end
 
+---Tests if all elements in an array succeed in passing the provided test function.
 ---@param testFn fun(element: unknown): boolean
 function lib.array:every(testFn)
     for i = 1, #self do
@@ -93,6 +107,7 @@ function lib.array:every(testFn)
     return true
 end
 
+---Sets all elements within a range to the given value and returns the modified array.
 ---@param value any
 ---@param start? number
 ---@param endIndex? number
@@ -101,6 +116,8 @@ function lib.array:fill(value, start, endIndex)
     start = start or 1
     endIndex = endIndex or length
 
+    if start < 0 then start = length + start + 1 end
+    if endIndex < 0 then endIndex = length + endIndex + 1 end
     if start < 1 then start = 1 end
     if endIndex > length then endIndex = length end
 
@@ -111,6 +128,7 @@ function lib.array:fill(value, start, endIndex)
     return self
 end
 
+---Creates a new array containing the elements from an array that pass the test of the provided function.
 ---@param testFn fun(element: unknown): boolean
 function lib.array:filter(testFn)
     local newArr = {}
@@ -128,6 +146,7 @@ function lib.array:filter(testFn)
     return lib.array:new(table_unpack(newArr))
 end
 
+---Returns the first or last element of an array that passes the provided test function.
 ---@param testFn fun(element: unknown): boolean
 ---@param last? boolean
 function lib.array:find(testFn, last)
@@ -144,6 +163,7 @@ function lib.array:find(testFn, last)
     end
 end
 
+---Returns the first or last index of the first element of an array that passes the provided test function.
 ---@param testFn fun(element: unknown): boolean
 ---@param last? boolean
 function lib.array:findIndex(testFn, last)
@@ -160,6 +180,7 @@ function lib.array:findIndex(testFn, last)
     end
 end
 
+---Returns the first or last index of the first element of an array that matches the provided value.
 ---@param value unknown
 ---@param last? boolean
 function lib.array:indexOf(value, last)
@@ -176,6 +197,7 @@ function lib.array:indexOf(value, last)
     end
 end
 
+---Executes the provided function for each element in an array.
 ---@param cb fun(element: unknown)
 function lib.array:forEach(cb)
     for i = 1, #self do
@@ -183,6 +205,7 @@ function lib.array:forEach(cb)
     end
 end
 
+---Determines if a given element exists inside an array.
 ---@param element unknown The value to find in the array.
 ---@param fromIndex? number The position in the array to begin searching from.
 function lib.array:includes(element, fromIndex)
@@ -193,11 +216,13 @@ function lib.array:includes(element, fromIndex)
     return false
 end
 
----@param seperator? string
-function lib.array:join(seperator)
-    return table_concat(self, seperator or ',')
+---Concatenates all array elements into a string, separated by commas or the specified separator.
+---@param separator? string
+function lib.array:join(separator)
+    return table_concat(self, separator or ',')
 end
 
+---Create a new array containing the results from calling the provided function on every element in an array.
 ---@param cb fun(element: unknown, index: number, array: self): unknown
 function lib.array:map(cb)
     local arr = {}
@@ -209,10 +234,12 @@ function lib.array:map(cb)
     return lib.array:new(table_unpack(arr))
 end
 
+---Removes the last element from an array and returns the removed element.
 function lib.array:pop()
     return table_remove(self)
 end
 
+---Adds the given elements to the end of an array and returns the new array length.
 ---@param ... any
 function lib.array:push(...)
     local elements = { ... }
@@ -226,6 +253,8 @@ function lib.array:push(...)
     return length
 end
 
+---The "reducer" function is applied to every element within an array, with the previous element's result serving as the accumulator.
+---If an initial value is provided, it's used as the accumulator for index 1; otherwise, index 1 itself serves as the initial value, and iteration begins from index 2.
 ---@generic T
 ---@param reducer fun(accumulator: T, currentValue: T, index?: number): T
 ---@param initialValue? T
@@ -233,16 +262,20 @@ end
 ---@return T
 function lib.array:reduce(reducer, initialValue, reverse)
     local length = #self
-    local initialIndex = initialValue and 1 or 2
-    local accumulator = initialValue or self[1]
+    local accumulator, startIdx
 
     if reverse then
-        for i = initialIndex, length do
-            local index = length - i + initialIndex
-            accumulator = reducer(accumulator, self[index], index)
+        accumulator = initialValue or self[length]
+        startIdx = initialValue and length or length - 1
+
+        for i = startIdx, 1, -1 do
+            accumulator = reducer(accumulator, self[i], i)
         end
     else
-        for i = initialIndex, length do
+        accumulator = initialValue or self[1]
+        startIdx = initialValue and 1 or 2
+
+        for i = startIdx, length do
             accumulator = reducer(accumulator, self[i], i)
         end
     end
@@ -250,6 +283,7 @@ function lib.array:reduce(reducer, initialValue, reverse)
     return accumulator
 end
 
+---Reverses the elements inside an array.
 function lib.array:reverse()
     local i, j = 1, #self
 
@@ -262,10 +296,12 @@ function lib.array:reverse()
     return self
 end
 
+---Removes the first element from an array and returns the removed element.
 function lib.array:shift()
     return table_remove(self, 1)
 end
 
+---Creates a shallow copy of a portion of an array as a new array.
 ---@param start? number
 ---@param finish? number
 function lib.array:slice(start, finish)
@@ -289,6 +325,7 @@ function lib.array:slice(start, finish)
     return arr
 end
 
+---Creates a new array with reversed elements from the given array.
 function lib.array:toReversed()
     local reversed = lib.array:new()
 
@@ -299,6 +336,7 @@ function lib.array:toReversed()
     return reversed
 end
 
+---Inserts the given elements to the start of an array and returns the new array length.
 ---@param ... any
 function lib.array:unshift(...)
     local elements = { ... }
@@ -316,6 +354,7 @@ function lib.array:unshift(...)
     return length + eLength
 end
 
+---Returns true if the given table is an instance of array or an array-like table.
 ---@param tbl ArrayLike
 ---@return boolean
 function lib.array.isArray(tbl)

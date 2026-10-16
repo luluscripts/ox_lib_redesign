@@ -1,3 +1,10 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 ---@diagnostic disable: param-type-mismatch
 lib.marker = {}
@@ -94,11 +101,11 @@ end
 
 ---@param options MarkerProps
 function lib.marker.new(options)
-  options.type =
-    type(options.type) == 'string' and markerTypes[options.type]
-    or type(options.type) == 'number' and options.type or nil
+  local self = setmetatable(table.clone(options), marker_mt)
 
-  local self = setmetatable(options, marker_mt)
+  self.type =
+    type(self.type) == 'string' and markerTypes[self.type]
+    or type(self.type) == 'number' and self.type or nil
 
   self.width += .0
   self.height += .0

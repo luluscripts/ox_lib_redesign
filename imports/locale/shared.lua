@@ -1,6 +1,14 @@
+--[[
+    https://github.com/overextended/ox_lib
+
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
 
 ---@type { [string]: string }
 local dict = {}
+local path = GetResourceMetadata(cache.resource, 'locales_path', 0) or 'locales'
 
 ---@param source { [string]: string }
 ---@param target { [string]: string }
@@ -41,10 +49,10 @@ function lib.getLocales()
 end
 
 local function loadLocale(key)
-    local data = LoadResourceFile(cache.resource, ('locales/%s.json'):format(key))
+    local data = LoadResourceFile(cache.resource, ('%s/%s.json'):format(path, key))
 
     if not data then
-        warn(("could not load 'locales/%s.json'"):format(key))
+        warn(("could not load '%s/%s.json'"):format(path, key))
     end
 
     return json.decode(data) or {}
@@ -52,6 +60,7 @@ end
 
 local table = lib.table
 
+---Loads the ox_lib locale module. Prefer using fxmanifest instead (see [docs](https://overextended.dev/ox_lib#usage)).
 ---@param key? string
 function lib.locale(key)
     local lang = key or lib.getLocaleKey()
@@ -63,10 +72,12 @@ function lib.locale(key)
 
     table.wipe(dict)
 
-    for k, v in pairs(flattenDict(locales, {})) do
+    local flat = flattenDict(locales, {})
+
+    for k, v in pairs(flat) do
         if type(v) == 'string' then
             for var in v:gmatch('${[%w%s%p]-}') do
-                local locale = locales[var:sub(3, -2)]
+                local locale = flat[var:sub(3, -2)]
 
                 if locale then
                     locale = locale:gsub('%%', '%%%%')
@@ -79,6 +90,7 @@ function lib.locale(key)
     end
 end
 
+---Gets a locale string from another resource and adds it to the dict.
 ---@param resource string
 ---@param key string
 ---@return string?
@@ -99,6 +111,7 @@ function lib.getLocale(resource, key)
     return locale
 end
 
+---Backing function for lib.getLocale.
 ---@param key string
 ---@return string?
 exports('getLocale', function(key)

@@ -1,4 +1,12 @@
+--[[
+    https://github.com/overextended/ox_lib
 
+    This file is licensed under LGPL-3.0 or higher <https://www.gnu.org/licenses/lgpl-3.0.en.html>
+
+    Copyright © 2025 Linden <https://github.com/thelindat>
+]]
+
+local lib = lib or ...
 local loaded = {}
 local _require = require
 
@@ -16,10 +24,11 @@ package = {
 ---@return string
 ---@return string
 local function getModuleInfo(modName)
-    local resource = modName:match('^@(.-)/.+') --[[@as string?]]
+    local resource, path = modName:match('^@(.-)/(.+)$')
+    resource = resource or modName:match('^@(.+)$')
 
     if resource then
-        return resource, modName:sub(#resource + 3)
+        return resource, path or 'init'
     end
 
     local idx = 4
@@ -31,10 +40,12 @@ local function getModuleInfo(modName)
             return cache.resource, modName
         end
 
-        resource = src:match('^@@([^/]+)/.+')
+        if src ~= 'require' then
+            resource = src:match('^@@([^/]+)/.+')
 
-        if resource and not src:find('^@@ox_lib/imports/require') then
-            return resource, modName
+            if resource then
+                return resource, modName
+            end
         end
 
         idx += 1
@@ -68,6 +79,8 @@ function package.searchpath(name, path)
     return nil, table.concat(tried, "\n\t")
 end
 
+---Attempts to load a module at the given path relative to the resource root directory.\
+---Returns a function to load the module chunk, or a string containing all tested paths.
 ---@param modName string
 ---@param env? table
 local function loadModule(modName, env)
@@ -78,13 +91,15 @@ local function loadModule(modName, env)
         local resource = tempData[2]
 
         table.wipe(tempData)
-        return assert(load(file, ('@@%s/%s'):format(resource, fileName), 't', env or _ENV))
+        return assert(load(file, ('@@%s/%s'):format(resource, fileName), 't', env or _ENV)), fileName
     end
 
     return nil, err or 'unknown error'
 end
 
 ---@alias PackageSearcher
+---| fun(modName: string): function loader
+---| fun(modName: string): nil, string errmsg
 
 ---@type PackageSearcher[]
 package.searchers = {
@@ -108,6 +123,7 @@ package.searchers = {
 ---@param filePath string
 ---@param env? table
 ---@return unknown
+---Loads and runs a Lua file at the given path. Unlike require, the chunk is not cached for future use.
 function lib.load(filePath, env)
     if type(filePath) ~= 'string' then
         error(("file path must be a string (received '%s')"):format(filePath), 2)
@@ -122,6 +138,7 @@ end
 
 ---@param filePath string
 ---@return table
+---Loads and decodes a json file at the given path.
 function lib.loadJson(filePath)
     if type(filePath) ~= 'string' then
         error(("file path must be a string (received '%s')"):format(filePath), 2)
@@ -137,6 +154,8 @@ function lib.loadJson(filePath)
     error(("json file '%s' not found\n\tno file '@%s/%s.json'"):format(filePath, resourceSrc, modPath))
 end
 
+---Loads the given module, returns any value returned by the seacher (`true` when `nil`).\
+---Passing `@resourceName.modName` loads a module from a remote resource.
 ---@param modName string
 ---@return unknown
 function lib.require(modName)
@@ -157,19 +176,28 @@ function lib.require(modName)
     local err = {}
 
     for i = 1, #package.searchers do
-        local result, errMsg = package.searchers[i](modName)
+        local loader, data = package.searchers[i](modName)
 
-        if result then
-            if type(result) == 'function' then result = result() end
-            loaded[modName] = result or result == nil
+        if loader then
+            if type(loader) == 'function' then loader = loader(modName, data) end
+            loaded[modName] = loader or loader == nil
 
             return loaded[modName]
         end
 
-        err[#err + 1] = errMsg
+        err[#err + 1] = data
     end
 
     error(("%s"):format(table.concat(err, "\n\t")))
 end
+
+_ENV.require = lib.require
+
+table.insert(package.searchers, 1, function(modName)
+    if modName:find('^Ox%.') then
+        modName = modName:gsub('^Ox.', '@ox_lib.modules.')
+        return function() return require(modName) end
+    end
+end)
 
 return lib.require
